@@ -10,6 +10,11 @@ namespace Neo4jExtensions
 {
     public static class CypherFluentQueryExtensions
     {
+        public static IMatchCypherBuilder<T> MatchBuilder<T>(this ICypherFluentQuery query)
+        {
+            throw new NotImplementedException();
+        }
+        
         public static ICypherFluentQuery Match<T>([NotNull] this ICypherFluentQuery query)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
