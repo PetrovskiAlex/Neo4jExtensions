@@ -12,7 +12,7 @@ namespace Neo4jExtensions
     {
         public static IMatchCypherBuilder<T> MatchBuilder<T>(this ICypherFluentQuery query)
         {
-            throw new NotImplementedException();
+            return new MatchCypherBuilder<T>();
         }
         
         public static ICypherFluentQuery Match<T>([NotNull] this ICypherFluentQuery query)
