@@ -2,6 +2,7 @@
 
 namespace Neo4jExtensions.Tests.Model
 {
+    [GraphElement(Name = "Tariff")]
     public class Tariff
     {
         public Guid Id { get; set; }

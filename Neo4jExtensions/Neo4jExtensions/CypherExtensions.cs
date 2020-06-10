@@ -8,7 +8,7 @@ using Neo4jClient.Cypher;
 
 namespace Neo4jExtensions
 {
-    public static class CypherFluentQueryExtensions
+    public static class CypherExtensions
     {
         public static IMatchCypherBuilder<T> MatchBuilder<T>(this ICypherFluentQuery query)
         {
@@ -185,7 +185,7 @@ namespace Neo4jExtensions
             }
         }
 
-        private static string GetNodeName<T>()
+        public static string GetNodeName<T>()
         {
             var type = typeof(T);
             var graphElementAttribute = type.GetCustomAttribute<GraphElementAttribute>();
