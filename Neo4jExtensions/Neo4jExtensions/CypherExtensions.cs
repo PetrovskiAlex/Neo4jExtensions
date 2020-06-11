@@ -10,9 +10,9 @@ namespace Neo4jExtensions
 {
     public static class CypherExtensions
     {
-        public static IMatchCypherBuilder<T> MatchBuilder<T>(this ICypherFluentQuery query)
+        public static INodeCypherBuilder<T> MatchBuilder<T>(this ICypherFluentQuery query)
         {
-            return new MatchCypherBuilder<T>();
+            return new NodeCypherBuilder<T>();
         }
         
         public static ICypherFluentQuery Match<T>([NotNull] this ICypherFluentQuery query)
@@ -112,7 +112,7 @@ namespace Neo4jExtensions
             throw new NotImplementedException();
         }
         
-        private static string BuildFilterPatterns<T>(Expression<Func<T, bool>>[] selectors)
+        public static List<string> BuildFilterPatterns<T>(Expression<Func<T, bool>>[] selectors)
         {
             if (selectors == null || !selectors.Any()) return null;
 
@@ -142,7 +142,7 @@ namespace Neo4jExtensions
                 patterns.Add(pattern);
             }
 
-            return "{ " + string.Join(", ", patterns) + " }";
+            return patterns;
 
             (Type Type, string Name) GetMemberName(Expression binaryExpression)
             {
