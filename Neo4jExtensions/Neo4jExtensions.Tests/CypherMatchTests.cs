@@ -21,7 +21,7 @@ namespace Neo4jExtensions.Tests
 
             result.Should().Be("(t:Tariff{ })");
         }
-        
+
         [Test]
         public void MatchWithPatternTest()
         {
