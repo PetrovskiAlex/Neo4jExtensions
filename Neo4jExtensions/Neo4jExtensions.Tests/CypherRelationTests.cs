@@ -57,5 +57,21 @@ namespace Neo4jExtensions.Tests
 
             result.Should().Be("(n:Tariff{ })-[r:ROUTE{ Condition : \"FOB\", Order : 1}]->(dp:Tariff{ Kind : \"Auto\"})");
         }
+        
+        [Test]
+        public void MatchWithPatternsRelationWithDependentPatternsTest()
+        {
+            var nodeBuilder = new NodeCypherBuilder<Tariff>();
+            nodeBuilder
+                .Where(t => t.Number == "number")
+                .Rel<Route>(b => b
+                    .Where(r => r.Condition == RouteCondition.FOB)
+                    .Where(r => r.Order == 1)
+                    .To<Tariff>("dp", matchBuilder => matchBuilder.Where(t => t.Kind == Kind.Auto)));
+
+            var result = nodeBuilder.Build();
+
+            result.Should().Be("(n:Tariff{ Number : \"number\"})-[r:ROUTE{ Condition : \"FOB\", Order : 1}]->(dp:Tariff{ Kind : \"Auto\"})");
+        }
     }
 }
