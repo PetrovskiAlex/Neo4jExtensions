@@ -41,8 +41,8 @@ namespace Neo4jExtensions
 
         public IRelationCypherBuilder<TRel> Where(Expression<Func<TRel, bool>> predicate)
         {
-            var patterns = CypherExtensions.BuildFilterPatterns(new [] {predicate});
-            _patterns.AddRange(patterns);
+            var pattern = CypherExtensions.BuildFilterPattern(predicate);
+            _patterns.Add(pattern);
 
             return this;
         }

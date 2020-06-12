@@ -35,8 +35,8 @@ namespace Neo4jExtensions
 
         public INodeCypherBuilder<T> Where(Expression<Func<T, bool>> predicate)
         {
-            var patterns = CypherExtensions.BuildFilterPatterns(new [] {predicate});
-            _patterns.AddRange(patterns);
+            var pattern = CypherExtensions.BuildFilterPattern(predicate);
+            _patterns.Add(pattern);
 
             return this;
         }
