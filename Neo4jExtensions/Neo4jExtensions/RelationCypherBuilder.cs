@@ -10,26 +10,33 @@ namespace Neo4jExtensions
         private string _toNode;
         private string _fromNode;
         private List<string> _patterns = new List<string>();
-        
-        public INodeCypherBuilder<T> To<T>(Action<INodeCypherBuilder<T>> matchBuilder, string target)
-        {
-            INodeCypherBuilder<T> nodeCypherBuilder = new NodeCypherBuilder<T>();
 
+        public RelationCypherBuilder(string target)
+        {
             _relation = $"{target}:" + CypherExtensions.GetNodeName<TRel>();
-            matchBuilder(nodeCypherBuilder);
-            _toNode = nodeCypherBuilder.Build();
-            return nodeCypherBuilder;
         }
 
-        public INodeCypherBuilder<T> From<T>(Action<INodeCypherBuilder<T>> matchBuilder, string target)
+        public RelationCypherBuilder() : this("r")
         {
-            INodeCypherBuilder<T> nodeCypherBuilder = new NodeCypherBuilder<T>();
+            
+        }
 
-            _relation = $"{target}:" + CypherExtensions.GetNodeName<TRel>();
-            matchBuilder(nodeCypherBuilder);
+        public void To<T>(string target, Action<INodeCypherBuilder<T>> matchBuilder = null)
+        {
+            var nodeCypherBuilder = new NodeCypherBuilder<T>(target);
+
+            matchBuilder?.Invoke(nodeCypherBuilder);
+
+            _toNode = nodeCypherBuilder.Build();
+        }
+
+        public void From<T>(string target, Action<INodeCypherBuilder<T>> matchBuilder = null)
+        {
+            var nodeCypherBuilder = new NodeCypherBuilder<T>(target);
+
+            matchBuilder?.Invoke(nodeCypherBuilder);
+
             _fromNode = nodeCypherBuilder.Build();
-
-            return nodeCypherBuilder;
         }
 
         public IRelationCypherBuilder<TRel> Where(Expression<Func<TRel, bool>> predicate)

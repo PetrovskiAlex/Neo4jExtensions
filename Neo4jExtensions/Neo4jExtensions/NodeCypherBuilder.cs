@@ -10,19 +10,27 @@ namespace Neo4jExtensions
         private string _relation;
         private List<string> _patterns = new List<string>();
 
-        public INodeCypherBuilder<T> Match(string target)
+        public NodeCypherBuilder(string target)
         {
             _match = $"{target}:" + CypherExtensions.GetNodeName<T>();
-            return this;
+        }
+        
+        public NodeCypherBuilder() : this("n")
+        {
         }
 
-        public IRelationCypherBuilder<TRel> Rel<TRel>(Action<IRelationCypherBuilder<TRel>> relBuilder)
+        public void Rel<TRel>(string target, Action<IRelationCypherBuilder<TRel>> relBuilder = null)
         {
-            var relationCypherBuilder = new RelationCypherBuilder<TRel>();
-            relBuilder(relationCypherBuilder);
-            _relation = relationCypherBuilder.Build();
+            var relationCypherBuilder = new RelationCypherBuilder<TRel>(target);
 
-            return relationCypherBuilder;
+            relBuilder?.Invoke(relationCypherBuilder);
+
+            _relation = relationCypherBuilder.Build();
+        }
+
+        public void Rel<TRel>(Action<IRelationCypherBuilder<TRel>> relBuilder = null)
+        {
+            Rel("r", relBuilder);
         }
 
         public INodeCypherBuilder<T> Where(Expression<Func<T, bool>> predicate)

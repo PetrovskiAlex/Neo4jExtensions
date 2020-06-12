@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Neo4jExtensions.Tests.Model;
 using NUnit.Framework;
 
@@ -8,16 +7,46 @@ namespace Neo4jExtensions.Tests
     public class CypherRelationTests
     {
         [Test]
-        public void RelationTest()
+        public void SimpleRelationTest()
         {
-            var mainNodeBuilder = new NodeCypherBuilder<Tariff>().Match("x");
-            Action<INodeCypherBuilder<Tariff>> depNodeBuilder = d => d.Match("dp");
-            Action<IRelationCypherBuilder<Route>> relBuilder = r => r.To(depNodeBuilder, "r");
+            var nodeBuilder = new NodeCypherBuilder<Tariff>();
+            nodeBuilder
+                .Rel<Route>(b => 
+                    b.To<Tariff>("dp"));
 
-            mainNodeBuilder.Rel(relBuilder);
-            var result = mainNodeBuilder.Build();
+            var result = nodeBuilder.Build();
 
-            result.Should().Be("(x:Tariff{ })-[r:ROUTE{ }]->(dp:Tariff{ })");
+            result.Should().Be("(n:Tariff{ })-[r:ROUTE{ }]->(dp:Tariff{ })");
+        }
+        
+        [Test]
+        public void RelationWithPatternsTest()
+        {
+            var nodeBuilder = new NodeCypherBuilder<Tariff>();
+            nodeBuilder
+                .Rel<Route>(b => b
+                    .Where(r => r.Condition == RouteCondition.FOB)
+                    .Where(r => r.Order == 1)
+                    .To<Tariff>("dp"));
+
+            var result = nodeBuilder.Build();
+
+            result.Should().Be("(n:Tariff{ })-[r:ROUTE{ Condition : \"FOB\", Order : 1}]->(dp:Tariff{ })");
+        }
+        
+        [Test]
+        public void RelationWithDependentPatternsTest()
+        {
+            var nodeBuilder = new NodeCypherBuilder<Tariff>();
+            nodeBuilder
+                .Rel<Route>(b => b
+                    .Where(r => r.Condition == RouteCondition.FOB)
+                    .Where(r => r.Order == 1)
+                    .To<Tariff>("dp", matchBuilder => matchBuilder.Where(t => t.Kind == Kind.Auto)));
+
+            var result = nodeBuilder.Build();
+
+            result.Should().Be("(n:Tariff{ })-[r:ROUTE{ Condition : \"FOB\", Order : 1}]->(dp:Tariff{ Kind : \"Auto\"})");
         }
     }
 }

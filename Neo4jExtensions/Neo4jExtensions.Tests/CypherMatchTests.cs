@@ -9,23 +9,30 @@ namespace Neo4jExtensions.Tests
         [Test]
         public void SimpleMatchTest()
         {
-            var builder = new NodeCypherBuilder<Tariff>();
-            var result = builder.Match("x").Build();
+            var result = new NodeCypherBuilder<Tariff>().Build();
 
-            result.Should().Be("(x:Tariff{ })");
+            result.Should().Be("(n:Tariff{ })");
         }
 
+        [Test]
+        public void MatchParamNameTest()
+        {
+            var result = new NodeCypherBuilder<Tariff>("t").Build();
+
+            result.Should().Be("(t:Tariff{ })");
+        }
+        
         [Test]
         public void MatchWithPatternTest()
         {
             var builder = new NodeCypherBuilder<Tariff>();
-            var result = builder.Match("x")
+            var result = builder
                 .Where(t => t.Number == "number1")
                 .Where(t => t.Kind == Kind.Auto)
                 .Where(t => t.Version == 1)
                 .Build();
 
-            result.Should().Be("(x:Tariff{ Number : \"number1\", Kind : \"Auto\", Version : 1})");
+            result.Should().Be("(n:Tariff{ Number : \"number1\", Kind : \"Auto\", Version : 1})");
         }
     }
 }

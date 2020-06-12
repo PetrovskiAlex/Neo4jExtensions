@@ -5,8 +5,8 @@ namespace Neo4jExtensions
 {
     public interface INodeCypherBuilder<T>
     {
-        INodeCypherBuilder<T> Match(string target);
-        IRelationCypherBuilder<TRel> Rel<TRel>(Action<IRelationCypherBuilder<TRel>> relBuilder);
+        void Rel<TRel>(string target, Action<IRelationCypherBuilder<TRel>> relBuilder = null);
+        void Rel<TRel>(Action<IRelationCypherBuilder<TRel>> relBuilder = null);
         INodeCypherBuilder<T> Where(Expression<Func<T, bool>> predicate);
 
         string Build();
