@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq.Expressions;
+using FluentAssertions;
 using Neo4jExtensions.Tests.Model;
 using NUnit.Framework;
 
@@ -10,15 +10,14 @@ namespace Neo4jExtensions.Tests
         [Test]
         public void RelationTest()
         {
-            //var mainNodeBuilder = new NodeCypherBuilder<Tariff>().Match("x");
-            Expression<Func<INodeCypherBuilder<Tariff>, string>> depNodeBuilder = d => d.Match("dp").Build();
-            Expression<Func<IRelationCypherBuilder<Route>, string>> relBuilder = r => r.To(depNodeBuilder, "r").Build();
+            var mainNodeBuilder = new NodeCypherBuilder<Tariff>().Match("x");
+            Action<INodeCypherBuilder<Tariff>> depNodeBuilder = d => d.Match("dp");
+            Action<IRelationCypherBuilder<Route>> relBuilder = r => r.To(depNodeBuilder, "r");
 
-            var s = relBuilder.Compile().Invoke(new RelationCypherBuilder<Route>());
+            mainNodeBuilder.Rel(relBuilder);
+            var result = mainNodeBuilder.Build();
 
-            /*var result = mainNodeBuilder.Rel(relBuilder);
-
-            result.Should().Be("(x:Tariff{ })-[r:ROUTE{ }]->(dp:Tariff{ })");*/
+            result.Should().Be("(x:Tariff{ })-[r:ROUTE{ }]->(dp:Tariff{ })");
         }
     }
 }

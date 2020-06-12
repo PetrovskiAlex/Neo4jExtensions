@@ -11,21 +11,24 @@ namespace Neo4jExtensions
         private string _fromNode;
         private List<string> _patterns = new List<string>();
         
-        public INodeCypherBuilder<T> To<T>(Expression<Func<INodeCypherBuilder<T>, string>> matchBuilder, string target)
+        public INodeCypherBuilder<T> To<T>(Action<INodeCypherBuilder<T>> matchBuilder, string target)
         {
             INodeCypherBuilder<T> nodeCypherBuilder = new NodeCypherBuilder<T>();
 
             _relation = $"{target}:" + CypherExtensions.GetNodeName<TRel>();
-            _toNode = matchBuilder.Compile().Invoke(nodeCypherBuilder);
+            matchBuilder(nodeCypherBuilder);
+            _toNode = nodeCypherBuilder.Build();
             return nodeCypherBuilder;
         }
 
-        public INodeCypherBuilder<T> From<T>(Expression<Func<INodeCypherBuilder<T>, string>> matchBuilder, string target)
+        public INodeCypherBuilder<T> From<T>(Action<INodeCypherBuilder<T>> matchBuilder, string target)
         {
             INodeCypherBuilder<T> nodeCypherBuilder = new NodeCypherBuilder<T>();
 
             _relation = $"{target}:" + CypherExtensions.GetNodeName<TRel>();
-            _fromNode = matchBuilder.Compile().Invoke(nodeCypherBuilder);
+            matchBuilder(nodeCypherBuilder);
+            _fromNode = nodeCypherBuilder.Build();
+
             return nodeCypherBuilder;
         }
 

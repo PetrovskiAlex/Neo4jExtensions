@@ -16,10 +16,12 @@ namespace Neo4jExtensions
             return this;
         }
 
-        public IRelationCypherBuilder<TRel> Rel<TRel>(Expression<Func<IRelationCypherBuilder<TRel>, string>> relBuilder)
+        public IRelationCypherBuilder<TRel> Rel<TRel>(Action<IRelationCypherBuilder<TRel>> relBuilder)
         {
             var relationCypherBuilder = new RelationCypherBuilder<TRel>();
-            _relation = relBuilder.Compile().Invoke(relationCypherBuilder);
+            relBuilder(relationCypherBuilder);
+            _relation = relationCypherBuilder.Build();
+
             return relationCypherBuilder;
         }
 
